@@ -33,37 +33,28 @@ jobs:
     needs: build
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Download zip file
-      uses: actions/download-artifact@v4
-      with:
-        name: package-zip
-        path: lambda/
+      - name: Download zip file
+        uses: actions/download-artifact@v4
+        with:
+          name: package-zip
+          path: lambda/
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
 
-    - name: Terraform Init
-      run: terraform init
-      working-directory: terraform
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform Init
+        run: terraform init
         working-directory: terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Deploy Lambda
-        run: |
-          aws lambda update-function-code \
-            --function-name textfunction \
-            --zip-file fileb://lambda/package.zip \
-            --region us-east-1
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
