@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "static_website" {
-  bucket = "punitdarira-static-website-final-cicd"
+  bucket = "naitikbarot--static-website-final-cicd"
 }
 
 resource "aws_s3_bucket_website_configuration" "static_website_configuration" {
@@ -52,11 +52,11 @@ locals {
 resource "aws_s3_object" "web_files" {
   for_each = local.files_to_upload
 
-  bucket = aws_s3_bucket.static_website.id
-  key    = each.key
-  source = each.value
+  bucket       = aws_s3_bucket.static_website.id
+  key          = each.key
+  source       = each.value
   content_type = "text/html"
-  etag   = filemd5(each.value)
+  etag         = filemd5(each.value)
 }
 
 data "template_file" "app_js" {
@@ -67,10 +67,10 @@ data "template_file" "app_js" {
   }
 }
 resource "aws_s3_bucket_object" "app_js" {
-  bucket = aws_s3_bucket.static_website.id
-  key    = "app.js"
+  bucket  = aws_s3_bucket.static_website.id
+  key     = "app.js"
   content = data.template_file.app_js.rendered
-  etag   = md5(data.template_file.app_js.rendered)
+  etag    = md5(data.template_file.app_js.rendered)
 }
 
 resource "aws_lambda_function" "text_function" {
@@ -80,7 +80,7 @@ resource "aws_lambda_function" "text_function" {
   role          = aws_iam_role.lambda_exec.arn
   filename      = "../lambda/package.zip"
 
-    environment {
+  environment {
     variables = {
       S3_BUCKET = aws_s3_bucket.static_website.bucket
     }
