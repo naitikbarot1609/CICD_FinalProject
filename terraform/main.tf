@@ -153,7 +153,7 @@ resource "aws_api_gateway_stage" "api_stage" {
   stage_name    = "prod"
 }
 output "website_url" {
-  value = aws_s3_bucket.static_website.website_endpoint
+  value = "http://${aws_s3_bucket.static_website.bucket}.s3-website-us-east-1.amazonaws.com"
 }
 
 output "api_url" {
